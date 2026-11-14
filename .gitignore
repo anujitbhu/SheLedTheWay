@@ -1,0 +1,8 @@
+.env
+*.env
+secrets/
+voice/
+*.m4a
+*.wav
+*.mp3
+.DS_Store
