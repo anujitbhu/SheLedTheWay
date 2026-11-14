@@ -1,4 +1,4 @@
-# 2026-11-16 | Savitribai Phule | Courage | Reel
+# 2026-12-16 | Savitribai Phule | Courage | Reel
 
 ## On-screen hook
 Every morning she packed a second sari. She knew what was coming.

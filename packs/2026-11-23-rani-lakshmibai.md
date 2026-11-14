@@ -1,10 +1,10 @@
 # 2026-11-23 | Rani Lakshmibai | Courage | Reel
 
 ## On-screen hook
-Jhansi was annexed after the Company refused recognition of her husband’s adopted heir. Lakshmibai kept resisting.
+Jhansi, March 1858. British troops close in. Lakshmibai prepares to fight.
 
 ## Voiceover
-After her husband died in 1853, Lakshmibai was named regent for her husband’s adopted son, Damodar Rao. The Company refused recognition and took control of Jhansi. Lakshmibai appealed against the decision. During the 1857 revolt, she became an authority in Jhansi. When British forces attacked in March 1858, she defended the city, then escaped to Kalpi and later reached Gwalior. Accounts differ on the exact day she died near Gwalior in June 1858, so we will leave the date there. Her resistance became part of Jhansi’s history. She led the way.
+Jhansi, March 1858. British forces surround the city. Rani Lakshmibai organizes its defense after the East India Company refuses to recognize her husband’s adopted heir and takes control of Jhansi. Her husband had named her regent for Damodar Rao. As the siege closes, she escapes to Kalpi, then reaches Gwalior, where fighting continues. She dies near Gwalior in June 1858. The Company takes Jhansi by force; her resistance outlasts the siege. She refuses to let the city go without a fight. She led the way.
 
 ## Caption
 Lakshmibai appealed, defended Jhansi, and continued resisting after the city fell. Save this story of courage under pressure, and share it with someone learning about India’s history. #RaniLakshmibai #IndianHistory #WomenInHistory #Courage #SheLedTheWay

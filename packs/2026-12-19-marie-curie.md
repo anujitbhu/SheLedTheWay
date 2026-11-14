@@ -1,4 +1,4 @@
-# 2026-11-19 | Marie Curie | Perseverance | Reel
+# 2026-12-19 | Marie Curie | Perseverance | Reel
 
 ## On-screen hook
 Her country would not let women into university. So she studied in secret.

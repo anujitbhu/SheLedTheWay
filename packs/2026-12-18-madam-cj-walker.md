@@ -1,4 +1,4 @@
-# 2026-11-17 | Madam C.J. Walker | Wealth | Carousel
+# 2026-12-18 | Madam C.J. Walker | Wealth | Carousel
 
 ## Slides
 1. She earned about $1.50 a day washing clothes. She died a millionaire.

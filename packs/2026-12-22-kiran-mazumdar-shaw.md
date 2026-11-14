@@ -1,4 +1,4 @@
-# 2026-11-20 | Kiran Mazumdar-Shaw | Wealth | Carousel
+# 2026-12-22 | Kiran Mazumdar-Shaw | Wealth | Carousel
 
 ## Slides
 1. Nobody would hire her as a brewmaster. So she built a biotech company in a garage.

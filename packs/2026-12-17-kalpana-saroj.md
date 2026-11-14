@@ -1,4 +1,4 @@
-# 2026-11-18 | Kalpana Saroj | Perseverance | Reel
+# 2026-12-17 | Kalpana Saroj | Perseverance | Reel
 
 ## On-screen hook
 The workers of a bankrupt factory asked one woman for help. She had left school in class nine.

@@ -1,4 +1,4 @@
-# 2026-11-21 | Junko Tabei | Courage | Reel
+# 2026-12-21 | Junko Tabei | Courage | Reel
 
 ## On-screen hook
 Twelve days before she stood on top of Everest, she was buried by an avalanche.

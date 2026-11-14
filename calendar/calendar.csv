@@ -1,12 +1,12 @@
 day,date,woman,pillar,format,status,hook
-1,2026-11-16,Savitribai Phule,Courage,Reel,Script ready,Every morning she packed a second sari. She knew what was coming.
-2,2026-11-17,Madam C.J. Walker,Wealth,Carousel,Script ready,She earned about $1.50 a day washing clothes. She died a millionaire.
-3,2026-11-18,Kalpana Saroj,Perseverance,Reel,Script ready,The workers of a bankrupt factory asked one woman for help. She had left school in class nine.
-4,2026-11-19,Marie Curie,Perseverance,Reel,Script ready,Her country would not let women into university. So she studied in secret.
-5,2026-11-20,Kiran Mazumdar-Shaw,Wealth,Carousel,Script ready,Nobody would hire her as a brewmaster. So she built a biotech company in a garage.
-6,2026-11-21,Junko Tabei,Courage,Reel,Script ready,"Twelve days before she stood on top of Everest, she was buried by an avalanche."
-7,2026-11-22,Week 1 recap,All three,Recap,Script ready,Three lessons from six women this week.
-8,2026-11-23,Rani Lakshmibai,Courage,Reel,Script ready,Jhansi was annexed after the Company refused recognition of her husband’s adopted heir. Lakshmibai kept resisting.
+1,2026-11-16,Colette Kress,Wealth,Reel,Script ready,For thirteen years she explained NVIDIA's numbers. This week she was handed the whole company.
+2,2026-11-17,Lisa Su,Wealth,Carousel,Planned,AMD shares hovered near $3 when she took over. Then she made a long-term bet.
+3,2026-11-18,Lynn Conway,Courage,Reel,Planned,IBM fired Lynn Conway in 1968. She helped change how engineers designed chips.
+4,2026-11-19,Sophie Wilson,Perseverance,Reel,Planned,ARM had to do more with less. Sophie Wilson helped make the design travel far.
+5,2026-11-20,Padmasree Warrior,Wealth,Carousel,Planned,"She began in chip engineering. Later, she led technology at Motorola and Cisco."
+6,2026-11-21,Grace Hopper,Perseverance,Reel,Planned,What if a computer could take word instructions? Hopper built a translator.
+7,2026-11-22,Week 1 recap,All three,Recap,Planned,Three lessons from six women in chips and technology. Whose story should we tell next?
+8,2026-11-23,Rani Lakshmibai,Courage,Reel,Script ready,"Jhansi, March 1858. British troops close in. Lakshmibai prepares to fight."
 9,2026-11-24,Oprah Winfrey,Wealth,Carousel,Planned,Taken off the evening news in Baltimore. She went on to build a media empire.
 10,2026-11-25,Anandibai Joshi,Perseverance,Reel,Planned,"In 1883 she crossed an ocean to study medicine, when Indian women simply did not."
 11,2026-11-26,Rosa Parks,Courage,Reel,Planned,1 December 1955. She was told to give up her seat. She said no.
@@ -29,3 +29,10 @@ day,date,woman,pillar,format,status,hook
 28,2026-12-13,Week 4 recap,All three,Recap,Planned,Three lessons from six women this week.
 29,2026-12-14,Wangari Maathai,Courage,Reel,Planned,She started by planting trees with village women. Her movement planted tens of millions.
 30,2026-12-15,Estee Lauder,Wealth,Carousel,Planned,She began by selling her uncle's skin creams to beauty salons.
+31,2026-12-16,Savitribai Phule,Courage,Reel,Script ready,Every morning she packed a second sari. She knew what was coming.
+32,2026-12-17,Kalpana Saroj,Perseverance,Reel,Script ready,The workers of a bankrupt factory asked one woman for help. She had left school in class nine.
+33,2026-12-18,Madam C.J. Walker,Wealth,Carousel,Script ready,She earned about $1.50 a day washing clothes. She died a millionaire.
+34,2026-12-19,Marie Curie,Perseverance,Reel,Script ready,Her country would not let women into university. So she studied in secret.
+35,2026-12-20,Week 5 recap,All three,Recap,Planned,Three lessons from six women this week.
+36,2026-12-21,Junko Tabei,Courage,Reel,Script ready,"Twelve days before she stood on top of Everest, she was buried by an avalanche."
+37,2026-12-22,Kiran Mazumdar-Shaw,Wealth,Carousel,Script ready,Nobody would hire her as a brewmaster. So she built a biotech company in a garage.
