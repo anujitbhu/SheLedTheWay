@@ -20,4 +20,4 @@ Text-led Reel in deep plum, with gold highlights and a simple chip-layout illust
 Sources:
 - https://computerhistory.org/profile/lynn-conway/
 - https://www.invent.org/inductees/lynn-conway
-- https://apnews.com/article/lynn-conway-computer-chip-design-fad001a6a29e0f81390381cf8f29c6e6
+- https://apnews.com/article/951e1378c257bda707224686bebb0507

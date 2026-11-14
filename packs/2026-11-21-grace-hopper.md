@@ -15,9 +15,9 @@ Use a text-led Reel with a vintage UNIVAC-style terminal illustration, not a syn
 ## Fact-check notes
 - Yale and IEEE describe A-0 as a compiler developed by Hopper’s team in 1952; the script avoids calling it definitively “the first compiler.”
 - FLOW-MATIC used English-like commands and helped shape COBOL. COBOL was a collaborative language project, not Hopper’s solo invention.
-- “Philadelphia, 1952” is the working scene; no invented quote is used.
+- “Philadelphia, 1952” is the working scene; the year is corroborated by Yale and IEEE, and the location by the Smithsonian archive. No invented quote is used.
 
 Sources:
 - https://news.yale.edu/2017/02/10/grace-murray-hopper-1906-1992-legacy-innovation-service
 - https://spectrum.ieee.org/from-punch-cards-to-python/about-grace-hopper
-- https://www.computerhistory.org/timeline/software-languages/
+- https://sirismm.si.edu/EADpdfs/NMAH.AC.0324.pdf
