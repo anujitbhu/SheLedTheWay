@@ -11,6 +11,7 @@ Standard library only. Run from anywhere:
 Secrets are read from ~/.config/sheledtheway/ on the server and are never
 printed or written to the repo:
   instagram.env  IG_ACCESS_TOKEN=...        (required)
+                 IG_USER_ID=1784...         (required for tokens that start with EAA)
                  IG_API_VERSION=v25.0       (optional)
   webapp.env     SLTW_SECRET=...            (already there for the board)
                  SLTW_PUBLIC_URL=https://myhermes.phoneme.in   (add this line)
@@ -57,8 +58,13 @@ def config():
     token = ig.get("IG_ACCESS_TOKEN", "")
     if not token:
         raise Stop(f"No IG_ACCESS_TOKEN in {CONF / 'instagram.env'}. See publish/SETUP-INSTAGRAM.md.")
-    return dict(token=token, version=ig.get("IG_API_VERSION", "v25.0"),
-                host=os.environ.get("IG_GRAPH_HOST", "https://graph.instagram.com").rstrip("/"),
+    # Tokens from "Instagram login" start with IG and use graph.instagram.com; tokens from
+    # Facebook / unified login (system-user tokens) start with EAA and use graph.facebook.com.
+    fb = token.startswith("EAA")
+    default_host = "https://graph.facebook.com" if fb else "https://graph.instagram.com"
+    return dict(token=token, version=ig.get("IG_API_VERSION", "v25.0"), fb=fb,
+                user_id=ig.get("IG_USER_ID", ""),
+                host=os.environ.get("IG_GRAPH_HOST", ig.get("IG_GRAPH_HOST", default_host)).rstrip("/"),
                 secret=web.get("SLTW_SECRET", "").encode(),
                 public=web.get("SLTW_PUBLIC_URL", "").rstrip("/"))
 
@@ -91,6 +97,12 @@ def api(cfg, method, path, params=None):
 
 
 def account(cfg):
+    if cfg["user_id"]:
+        me = api(cfg, "GET", cfg["user_id"], {"fields": "username"})
+        return dict(user_id=cfg["user_id"], username=me.get("username"), account_type="")
+    if cfg["fb"]:
+        raise Stop("This token type needs the Instagram account id. Add a line IG_USER_ID=<the number shown under "
+                   "the account name on Meta's token page> to instagram.env.")
     me = api(cfg, "GET", "me", {"fields": "user_id,username,account_type"})
     if not me.get("user_id"):
         raise Stop("Instagram did not return an account id for this token.")
@@ -177,8 +189,8 @@ def approved_on(date):
 # ---------- commands ----------
 def cmd_check(cfg):
     me = account(cfg)
-    print(f"Connected to @{me.get('username')} (account type: {me.get('account_type')}).")
-    if str(me.get("account_type", "")).upper() not in ("BUSINESS", "MEDIA_CREATOR", "CREATOR"):
+    print(f"Connected to @{me.get('username')}" + (f" (account type: {me['account_type']})." if me.get("account_type") else "."))
+    if me.get("account_type") and str(me["account_type"]).upper() not in ("BUSINESS", "MEDIA_CREATOR", "CREATOR"):
         print("WARNING: publishing needs a Professional (Creator or Business) account.")
     try:
         lim = api(cfg, "GET", f"{me['user_id']}/content_publishing_limit", {"fields": "quota_usage,config"})
@@ -198,6 +210,9 @@ def cmd_check(cfg):
 
 
 def cmd_refresh(cfg):
+    if cfg["fb"]:
+        print("This is a system-user token that does not expire; no refresh needed.")
+        return 0
     r = api(cfg, "GET", f"{cfg['host']}/refresh_access_token",
             {"grant_type": "ig_refresh_token", "access_token": cfg["token"]})
     new = r.get("access_token")
@@ -318,6 +333,10 @@ def main():
                 print("Another publish run is in progress; exiting.")
                 return 0
         cfg = config()
+        if "--token-type" in sys.argv:
+            t = cfg["token"]
+            print(f"Token starts with {t[:4]}, length {len(t)}, host {cfg['host']}, IG_USER_ID {'set' if cfg['user_id'] else 'not set'}.")
+            return 0
         if cmd == "check":
             return cmd_check(cfg)
         if cmd == "refresh":
