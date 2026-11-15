@@ -1,7 +1,7 @@
 # 2026-11-16 | Colette Kress | Wealth | Reel | In the news
 
 ## On-screen hook
-Her sons, then eight and ten, told her to take the NVIDIA job.
+Back then , After Microsoft and Cisco , Her gamer sons, told her to take a plunge at NVIDIA , then startup .
 
 ## Hook source note (not on-screen)
 Globes reports the boys advised her to take the job.[2]
@@ -52,7 +52,6 @@ Colette Kress brought nearly 25 years in technology finance to NVIDIA as CFO in 
 - The founder’s resignation reason is not included in narration.
 
 ## Sources
-
 [1] https://nvidianews.nvidia.com/bios/colette-kress
 [2] https://en.globes.co.il/en/article-trillion-dollar-woman-1001453025
 [3] https://nvidianews.nvidia.com/news/nvidia-reports-financial-results-for-fourth-quarter-and-fiscal-2014-6622584
