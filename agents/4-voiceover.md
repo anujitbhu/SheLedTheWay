@@ -1,16 +1,19 @@
 # Stage 4: Voiceover agent
 
-You add the narration to a rendered Reel. This stage is switched off until the owner has chosen a voice service and recorded a voice sample.
+You add the narration to a rendered Reel and mix it into the video.
 
-## When it is switched on
+## Each run
 
 1. `git pull --rebase`.
-2. Take any `publish/queue.csv` row with format `Reel`, `voice` = `no` and status `Awaiting approval`.
-3. Generate the narration from the pack's voiceover text with the owner's cloned voice. Keys and voice samples stay in `~/.config/sheledtheway/` on the server and never enter the repo.
-4. Fit the narration to the video: if it runs longer than the picture, lengthen scene holds rather than speeding up the voice. Mix at a level where speech is clear with no music.
-5. Replace the mp4 in place, set `voice` to `yes`, commit as `voice: YYYY-MM-DD <name>` and push.
+2. Take any `publish/queue.csv` row with format `Reel` and `voice` = `no` whose status is `Awaiting approval` or `Changes requested`.
+3. Generate the narration from the pack's Voiceover section, one clip per scene.
+   - **Until the owner's voice clone exists:** use the generic text-to-speech voice already used for the Kress draft (Edge TTS). Say so in the pack's media notes, and keep the "AI-generated narration" line in the caption.
+   - **Once the clone exists:** use only that. Keys and voice samples stay in `~/.config/sheledtheway/` on the server and never enter the repo.
+4. Mix: place each clip at the start of its scene. Speech must end before the scene's fade. If a line runs long, ask the video stage to lengthen that scene rather than speeding up the voice. Speech clear, no clipping, no music.
+5. Write the result to the file the queue row points to, set `voice` to `yes` and status to `Awaiting approval`, commit as `voice: YYYY-MM-DD <name>` and push. Message the owner that it is ready to review.
 
 ## Rules
 
-- Use only the owner's own voice clone. Never clone or imitate anyone else's voice.
-- Read numbers and names the way the pack spells them out; check pronunciation of names before generating.
+- Never clone or imitate any real person's voice other than the owner's own.
+- Spoken numbers may be rounded for pacing; on-screen numbers stay exact.
+- Check the pronunciation of names before generating.

@@ -12,8 +12,12 @@ You turn an approved script into the media file. Work only on calendar rows with
 4. Add or update the story's row in `publish/queue.csv` (columns `date,time_ist,format,media,pack,voice,status`) with `voice` = `no` and `status` = `Awaiting approval`. Default slot 19:30 IST.
 5. Commit as `video: YYYY-MM-DD <name>` and push. Message the owner that it is ready to review.
 
+## When the owner edits a story on the board
+
+"Save and regenerate" sets the queue row to `Changes requested` with a note that starts "Script edited on the board". The pack is now the owner's text: do not rewrite it. Compare the pack with the current video, rebuild only the scenes whose on-screen text changed, keep the rest, and follow any extra instruction in the note. Then hand over to the voiceover stage so the narration is redone to match, and set the row back to `Awaiting approval`.
+
 ## Rules
 
 - No AI-generated likeness of a real person, and no photo copied from the web. Use a real photo only if the owner supplied it and its source is recorded in the pack.
 - Text must be readable on a phone: no more than about 14 words on screen at once.
-- The renderer script will live in `render/`. Until it is there, leave this stage to Claude and do nothing.
+- Write every new version to the same file name the queue points to, and keep the previous version in `reels/drafts/` (not committed) until the owner approves.
