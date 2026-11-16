@@ -2,6 +2,7 @@
 
 ## Slides
 1. She joined Motorola in 1984. By 2007, she was CTO at Cisco.
+   Gold label: Padmasree Warrior | Cisco CTO
 2. Warrior studied chemical engineering at IIT Delhi and earned a master’s degree at Cornell.
 3. Motorola named her corporate CTO in 2003.
 4. She also led Motorola Labs and work on emerging technologies.
@@ -11,7 +12,33 @@
 8. The lesson: the work you start with can become the platform you lead. Follow for a new story every day.
 
 ## Caption
-Warrior’s career moved from semiconductor work to top technology roles at Motorola and Cisco. Save this for someone who wants to grow from building technology to shaping a company’s direction. #PadmasreeWarrior #WomenInTech #TechLeadership #SheLedTheWay
+Padmasree Warrior’s Cisco career followed years of engineering and technology leadership at Motorola.
+
+She studied chemical engineering at IIT Delhi, earned a master’s at Cornell and joined Motorola in 1984. In 2003, Motorola named her corporate CTO; her work included leading Motorola Labs and emerging technologies.
+
+Cisco appointed her CTO in 2007, with responsibility for technology strategy and direction. Later roles included enterprise engineering and company-wide technology leadership. Her path connected semiconductor work, product development, engineering and corporate strategy. The lesson is not that everyone follows the same route, but that the work you start with can become the platform you lead.
+
+Save this for your next career reflection, or send it to someone growing from building technology to shaping its direction.
+
+#PadmasreeWarrior #Cisco #TechnologyLeadership #SheLedTheWay
+
+## SEO
+Primary keyword: Padmasree Warrior’s Cisco career
+Supporting keywords: Motorola corporate CTO; Cisco CTO; technology strategy; engineering leadership
+Caption opening (max 125 characters): Padmasree Warrior’s Cisco career followed years of engineering and technology leadership at Motorola. (101 characters)
+On-screen keyword: Padmasree Warrior | Cisco CTO
+Spoken keyword: N/A — carousel; no voiceover.
+Alt text:
+1. A deep-plum text-led cover with ivory lettering and a small gold Padmasree Warrior name-and-topic label connects joining Motorola in 1984 with becoming Cisco CTO in 2007.
+2. Ivory text on a deep-plum slide lists chemical engineering studies at IIT Delhi and a master’s at Cornell, with gold accents.
+3. A deep-plum slide uses ivory text and gold emphasis to mark the 2003 appointment as Motorola’s corporate CTO.
+4. Ivory text on deep plum describes leadership of Motorola Labs and emerging technologies beside a subtle circuit motif.
+5. A text-led deep-plum slide states the 2007 Cisco CTO appointment and responsibility for technology strategy and direction.
+6. Ivory text with gold highlights on deep plum describes later enterprise engineering and company-wide technology leadership roles at Cisco.
+7. A deep-plum slide presents semiconductor work, product development, engineering and corporate strategy as connected stages in an ivory text sequence.
+8. A closing deep-plum slide uses ivory text and gold emphasis to present the lesson that starting work can become the platform you lead.
+Hashtags: #PadmasreeWarrior #Cisco #TechnologyLeadership #SheLedTheWay
+Search check: Caption and cover label align on Padmasree Warrior’s Motorola-to-Cisco technology leadership; voiceover is N/A; Google autocomplete included “padmasree warrior cisco.” Instagram top-result captions were unavailable this run; search volumes were not verified.
 
 ## Visual notes
 Text-led carousel with a clean circuit-board motif in deep plum, gold and ivory. Warrior is living; use no image unless it is properly licensed. Do not create an AI-generated photograph.
