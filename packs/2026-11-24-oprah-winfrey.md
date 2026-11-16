@@ -15,16 +15,36 @@
 ## Caption
 
 Oprah Winfrey’s Baltimore news story did not end with the evening desk.[1][6]
+
 In 1976, at 22, she joined WJZ-TV’s six o’clock news.[1][6][7]
 Less than eight months later, the station reassigned her to morning cut-ins.[1][3][6]
 Winfrey later recalled that she had failed at news and feared being fired.[3]
 She continued in Baltimore and co-hosted *People Are Talking* in 1978.[1][7]
+
 In 1984, she moved to Chicago to host *A.M. Chicago*.[2][3][5]
 The program became *The Oprah Winfrey Show* in 1985 and entered national syndication in 1986.[2][3][4]
-A career detour can reveal a different format. Save this for someone navigating a change. #OprahWinfrey #WomenInMedia #TalkShowHost #SheLedTheWay
+
+A career detour can reveal a different format. Save this story, or send it to someone navigating a change.
+
+#OprahWinfrey #WomenInMedia #TalkShowHost #SheLedTheWay
 
 ## SEO
-pending
+Primary keyword: Oprah Winfrey
+Supporting keywords: Oprah Winfrey Show; Baltimore news; People Are Talking; A.M. Chicago
+Caption opening (max 125 characters): Oprah Winfrey’s Baltimore news story did not end with the evening desk.[1][6] (77 characters)
+On-screen keyword: Oprah Winfrey · Talk-show host
+Spoken keyword: N/A — eight-slide carousel with no voiceover.
+Alt text:
+1. A deep-plum text-led cover presents the reassignment hook in ivory text above the small gold label “Oprah Winfrey · Talk-show host.”
+2. An ivory-on-plum timeline card with gold emphasis marks Baltimore in 1976 and joining WJZ-TV’s six o’clock news at age 22.
+3. A timeline card marks April 1, 1977, when the station reassigned her from evening news to morning cut-ins after about eight months.
+4. A text-led card presents Winfrey’s recollection that she had failed at news and feared being fired.
+5. A timeline card marks 1978 and co-hosting WJZ’s local talk show *People Are Talking*.
+6. A timeline card marks Chicago in 1984 and the move to host *A.M. Chicago*.
+7. A text-led timeline card highlights the 1985 renaming and 1986 national syndication.
+8. A closing card presents the lesson about a different format and a save-or-send invitation.
+Hashtags: #OprahWinfrey #WomenInMedia #TalkShowHost #SheLedTheWay
+Search check: Caption, existing cover label and carousel text align on Oprah Winfrey’s local-to-national TV career.[1][2][4]; autocomplete included “oprah winfrey show.” Instagram top-result captions were unavailable this run; search volumes were not verified.
 
 ## Visual notes
 
