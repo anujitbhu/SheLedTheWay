@@ -28,6 +28,7 @@ IST = timezone(timedelta(hours=5, minutes=30))
 SESSION_DAYS = 14
 GIT_LOCK = threading.Lock()
 SYNC = {"at": None, "ok": True, "msg": "not yet synced"}
+APP_MTIME = Path(__file__).stat().st_mtime
 
 STAGES = ["Research", "Draft", "Video", "Voice", "Review", "Publish"]
 QUEUE_FIELDS = ["date", "time_ist", "format", "media", "pack", "voice", "status"]
@@ -76,6 +77,9 @@ def commit_push(message, paths):
 def sync_loop():
     while True:
         pull()
+        if Path(__file__).stat().st_mtime != APP_MTIME:
+            with GIT_LOCK:  # let any save in progress finish, then let systemd restart us
+                os._exit(3)
         time.sleep(120)
 
 
@@ -125,6 +129,30 @@ def media_for(date, queue_row):
         if imgs:
             return "images", [str(x.relative_to(REPO)) for x in imgs]
     return None, []
+
+
+def split_pack(text):
+    """Return (preamble, [(heading, body), ...]) split on '## ' headings."""
+    pre, sections, cur = [], [], None
+    for line in text.replace("\r\n", "\n").split("\n"):
+        if line.startswith("## "):
+            cur = [line[3:].strip(), []]
+            sections.append(cur)
+        elif cur is None:
+            pre.append(line)
+        else:
+            cur[1].append(line)
+    return "\n".join(pre).strip("\n"), [(h, "\n".join(b).strip("\n")) for h, b in sections]
+
+
+def join_pack(pre, sections):
+    parts = [pre] if pre else []
+    parts += [f"## {h}\n{b}".rstrip("\n") for h, b in sections]
+    return "\n\n".join(parts) + "\n"
+
+
+def text_hash(text):
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 
 def latest_review(reviews, date, stage):
@@ -226,6 +254,9 @@ textarea.prompt{min-height:60vh;font:14px/1.5 ui-monospace,Menlo,monospace}
 button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid var(--plum);background:var(--plum);color:#fff;cursor:pointer;margin:8px 6px 0 0}
 button.alt{background:#fff;color:var(--plum)}button.no{background:var(--rose);border-color:var(--rose)}
 table{border-collapse:collapse;width:100%;background:#fff}td,th{border:1px solid var(--line);padding:6px 10px;text-align:left;font-size:14px}
+a.btn{display:inline-block;padding:7px 14px;border-radius:6px;background:var(--gold);color:var(--ink);text-decoration:none;font-weight:600}
+.sec{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px 14px;margin-bottom:10px}.sec h3{margin:4px 0 8px;font-size:17px}
+.sec textarea{font:15px/1.5 Inter,system-ui,sans-serif}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px}@media(max-width:900px){.cols{grid-template-columns:1fr}}
 """
 
@@ -301,6 +332,7 @@ def story_page(date, token, flash=""):
     r = s["row"]
     left = [f'<h1>{E(r.get("woman",""))}</h1><p class="meta">{E(date)} · {E(r.get("format",""))} · {E(r.get("pillar",""))}</p>']
     if s["pack"]:
+        left.append(f'<p><a class="btn" href="/story/{E(date)}/edit">Edit this story</a></p>')
         left.append(f'<div class="pack">{md(s["text"])}</div>')
         last = s["script"]
         note = f'<p class="meta">Last decision: {E(last["decision"])} at {E(last["at_ist"])}. {E(last["note"])}</p>' if last else ""
@@ -336,10 +368,106 @@ def story_page(date, token, flash=""):
                      f'<button name="decision" value="Approved">Approve for publishing</button>'
                      f'<button class="alt" name="decision" value="Changes requested">Ask for changes</button>'
                      f'<button class="no" name="decision" value="Rejected">Reject</button></form>')
+    if s["queue"] and s["queue"]["status"] != "Published":
+        q = s["queue"]
+        right.append(f'<form class="review" method="post" action="/schedule"><h3>Posting slot</h3>'
+                     f'<input type="hidden" name="csrf" value="{token}"><input type="hidden" name="date" value="{E(date)}">'
+                     f'<label class="meta">Time (IST, 24-hour) <input name="time_ist" value="{E(q["time_ist"])}" size="6" '
+                     f'pattern="[0-2][0-9]:[0-5][0-9]" required></label> '
+                     f'<button class="alt">Change time</button>'
+                     f'<p class="meta">Best reach in India is usually 19:00 to 21:00.</p></form>')
     if s["log"]:
         right.append(f'<div class="card">Published {E(s["log"].get("published_at_ist",""))}. {E(s["log"].get("notes",""))}</div>')
     body = f'<div class="cols"><div>{"".join(left)}</div><div>{"".join(right)}</div></div>'
     return page(r.get("woman", date), body, flash)
+
+
+def edit_page(date, token, flash=""):
+    s = next((x for x in stories() if x["date"] == date), None)
+    if not s or not s["pack"]:
+        return None
+    pre, sections = split_pack(s["text"])
+    out = [f'<h1>Edit: {E(s["row"].get("woman",""))}</h1><p class="meta"><a href="/story/{E(date)}">Back to the story</a> · '
+           f'Change any part, then save. Section titles stay fixed so the agents can find each part.</p>'
+           f'<form method="post" action="/edit"><input type="hidden" name="csrf" value="{token}">'
+           f'<input type="hidden" name="date" value="{E(date)}"><input type="hidden" name="hash" value="{text_hash(s["text"])}">'
+           f'<input type="hidden" name="count" value="{len(sections)}">']
+    for i, (h, b) in enumerate(sections):
+        rows = max(3, min(24, b.count("\n") + 2 + len(b) // 90))
+        out.append(f'<div class="sec"><h3>{E(h)}</h3><textarea name="s{i}" rows="{rows}">{E(b)}</textarea></div>')
+    has_media = bool(s["media"])
+    regen = ("Save and regenerate the video" if has_media else "Save and send to the video agent")
+    out.append(f'<div class="sec"><h3>Instructions for the regeneration (optional)</h3>'
+               f'<textarea name="note" rows="3" placeholder="For example: slow down scene 4, re-record the narration, keep the visuals"></textarea>'
+               f'<p class="meta">Save keeps your text only. {E(regen)} also marks the script as approved by you and asks the '
+               f'video and voice agents to rebuild the media to match; the new version comes back here for your review.</p>'
+               f'<button name="action" value="save">Save</button>'
+               f'<button class="alt" name="action" value="regen">{E(regen)}</button></div></form>')
+    return page("Edit " + s["row"].get("woman", date), "".join(out), flash)
+
+
+def do_edit(form):
+    """Returns (message, saved)."""
+    date, action = form.get("date", ""), form.get("action", "")
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) or action not in ("save", "regen"):
+        return "Bad request.", False
+    s = next((x for x in stories() if x["date"] == date), None)
+    if not s or not s["pack"]:
+        return "There is no script to edit.", False
+    if form.get("hash") != text_hash(s["text"]):
+        return "This story changed on the server while you were editing. Reload the page and redo your edit.", False
+    pre, sections = split_pack(s["text"])
+    if str(len(sections)) != form.get("count"):
+        return "Section mismatch; reload the page.", False
+    new = [(h, form.get(f"s{i}", b).replace("\r\n", "\n").strip("\n")) for i, (h, b) in enumerate(sections)]
+    if any(re.search(r"^## ", b, re.M) for _, b in new):
+        return "A section cannot contain a line starting with '## '.", False
+    rel = str(s["pack"].relative_to(REPO))
+    changed = new != sections
+    if changed:
+        s["pack"].write_text(join_pack(pre, new), encoding="utf-8")
+    paths = [rel]
+    if action == "save":
+        if not changed:
+            return "Nothing changed.", True
+        return "Saved. " + commit_push(f"edit: {date} script edited by owner", paths), True
+    note = form.get("note", "").strip()[:1000]
+    stamp = now().strftime("%Y-%m-%d %H:%M")
+    cal = read_csv("calendar/calendar.csv")
+    for row in cal:
+        if row["date"] == date:
+            row["status"] = "Script approved"
+    write_csv("calendar/calendar.csv", list(cal[0].keys()), cal)
+    reviews = read_csv("review/reviews.csv", REVIEW_FIELDS)
+    reviews.append(dict(date=date, stage="script", decision="Approved", note="Edited by the owner on the board", at_ist=stamp))
+    queue = read_csv("publish/queue.csv", QUEUE_FIELDS)
+    row = next((q for q in queue if q["date"] == date), None)
+    if row and row["status"] == "Published":
+        return "Already published; the media was not sent for regeneration.", changed
+    if row:
+        row["status"] = "Changes requested"
+        row["voice"] = "no"
+        write_csv("publish/queue.csv", QUEUE_FIELDS, queue)
+        reviews.append(dict(date=date, stage="video", decision="Changes requested", at_ist=stamp,
+                            note=("Script edited on the board. Regenerate the video and narration to match the pack. " + note).strip()))
+    write_csv("review/reviews.csv", REVIEW_FIELDS, reviews)
+    paths += ["calendar/calendar.csv", "review/reviews.csv", "publish/queue.csv"]
+    return "Sent for regeneration. " + commit_push(f"edit: {date} script edited by owner, regeneration requested", paths), True
+
+
+def do_schedule(form):
+    date, t = form.get("date", ""), form.get("time_ist", "").strip()
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) or not re.fullmatch(r"([01]\d|2[0-3]):[0-5]\d", t):
+        return "Enter the time as HH:MM, for example 19:30."
+    queue = read_csv("publish/queue.csv", QUEUE_FIELDS)
+    row = next((q for q in queue if q["date"] == date), None)
+    if not row:
+        return "This story is not in the queue yet."
+    if row["status"] in ("Published", "Publishing"):
+        return "Already published; the time was not changed."
+    row["time_ist"] = t
+    write_csv("publish/queue.csv", QUEUE_FIELDS, queue)
+    return f"Posting time set to {t} IST. " + commit_push(f"queue: {date} time set to {t} IST", ["publish/queue.csv"])
 
 
 def agent_files():
@@ -557,6 +685,9 @@ class Handler(BaseHTTPRequestHandler):
         flash = qs.get("m", "")
         if u.path in ("/", "/login"):
             return self.send_html(board(flash))
+        if u.path.startswith("/story/") and u.path.endswith("/edit"):
+            html_ = edit_page(u.path[7:-5], token, flash)
+            return self.send_html(html_) if html_ else self.send_error(404)
         if u.path.startswith("/story/"):
             html_ = story_page(u.path[7:], token, flash)
             return self.send_html(html_) if html_ else self.send_error(404)
@@ -594,6 +725,13 @@ class Handler(BaseHTTPRequestHandler):
         if u.path == "/review":
             msg = do_review(form)
             return self.redirect(f"/story/{quote(form.get('date',''))}?m={quote(msg)}")
+        if u.path == "/schedule":
+            msg = do_schedule(form)
+            return self.redirect(f"/story/{quote(form.get('date',''))}?m={quote(msg)}")
+        if u.path == "/edit":
+            msg, ok = do_edit(form)
+            d = quote(form.get("date", ""))
+            return self.redirect(f"/story/{d}{'' if ok else '/edit'}?m={quote(msg)}")
         if u.path == "/agents":
             msg = do_agent_save(form)
             return self.redirect(f"/agents?f={quote(form.get('f',''))}&m={quote(msg)}")
