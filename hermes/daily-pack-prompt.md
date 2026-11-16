@@ -6,6 +6,7 @@ Each stage has its own instruction file in `agents/`. The owner edits those file
 
 1. `agents/1-research.md`
 2. `agents/2-factcheck-draft.md`
+   then `agents/2b-seo.md` (search optimisation; never skip it)
 3. `agents/3-video.md`
 4. `agents/4-voiceover.md`
 5. Stage 5 is the owner's review on the web board. Read `agents/5-review.md` for the rules it places on you.

@@ -3,7 +3,7 @@
 ## Profile
 
 - Instagram: @SheLedtheWay (Professional, Creator, category Education)
-- Name field: She Led The Way: Women in History
+- Name field: SheLedTheWay | Women Who Made History (see `brand/profile-seo.md` for all search settings)
 - Bio: Daily stories of women who broke barriers, built empires & changed history. Perseverance, Courage, Wealth. A new story every day.
 - Format: faceless, English, voiceover in the owner's cloned voice
 

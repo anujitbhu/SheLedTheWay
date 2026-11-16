@@ -189,7 +189,8 @@ def stories():
             st["Publish"] = ("back", "interrupted; check Instagram")
         else:
             st["Publish"] = ("todo", "not approved")
-        out.append(dict(row=row, date=d, pack=pack, text=text, queue=q, kind=kind, media=media,
+        seo = "ready" if re.search(r"^Primary keyword:\s*\S", text, re.M) or re.search(r"^- `?Primary keyword:?`?\s*\S", text, re.M) else ("pending" if pack else "-")
+        out.append(dict(row=row, date=d, pack=pack, text=text, queue=q, kind=kind, media=media, seo=seo,
                         stages=st, script=script, video=video, log=log.get(d)))
     return out
 
@@ -288,7 +289,7 @@ def board(flash=""):
         cells = "".join(f'<div class="stage {v[0]}"><b>{i+1}. {k}</b>{E(v[1])}</div>'
                         for i, (k, v) in enumerate(s["stages"].items()))
         body.append(f'<div class="card"><h3><a href="/story/{E(s["date"])}">{E(r.get("woman",""))}</a></h3>'
-                    f'<div class="meta">{E(s["date"])} · {E(r.get("format",""))} · {E(r.get("pillar",""))}</div>'
+                    f'<div class="meta">{E(s["date"])} · {E(r.get("format",""))} · {E(r.get("pillar",""))} · Search (SEO): {E(s["seo"])}</div>'
                     f'<div>{E(r.get("hook",""))}</div><div class="stages">{cells}</div></div>')
     return page("Board", "".join(body), flash)
 

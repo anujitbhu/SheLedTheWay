@@ -12,6 +12,10 @@ You add the narration to a rendered Reel and mix it into the video.
 4. Mix: place each clip at the start of its scene. Speech must end before the scene's fade. If a line runs long, ask the video stage to lengthen that scene rather than speeding up the voice. Speech clear, no clipping, no music.
 5. Write the result to the file the queue row points to, set `voice` to `yes` and status to `Awaiting approval`, commit as `voice: YYYY-MM-DD <name>` and push. Message the owner that it is ready to review.
 
+## Search (SEO) requirement
+
+Her full name must be spoken within the first two sentences, as the pack's `## SEO` section specifies. Instagram transcribes the audio and uses it for search. If the voiceover text does not do this, stop and send the pack back to the SEO stage; do not improvise wording.
+
 ## Rules
 
 - Never clone or imitate any real person's voice other than the owner's own.
