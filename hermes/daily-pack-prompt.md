@@ -13,3 +13,5 @@ Each stage has its own instruction file in `agents/`. The owner edits those file
 6. `agents/6-publish.md`
 
 A story moves forward only when the stage before it is complete. Scripts wait for the owner's approval before video; media waits for the owner's approval before publishing.
+
+Between content runs, answer the owner's board: follow `hermes/request-handler.md` on a short cycle (every few minutes) so his alternatives and agent chats get quick replies.

@@ -12,7 +12,7 @@ Settings come from the environment (see webapp/DEPLOY.md):
   SLTW_PORT      port on 127.0.0.1 (default 8787)
   SLTW_GIT_SYNC  "0" turns off git pull/commit/push (for local testing)
 """
-import csv, hashlib, hmac, html, io, mimetypes, os, re, subprocess, sys, threading, time
+import csv, hashlib, hmac, html, io, json, mimetypes, os, re, subprocess, sys, threading, time
 from datetime import datetime, timedelta, timezone
 from http import cookies
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -258,7 +258,92 @@ a.btn{display:inline-block;padding:7px 14px;border-radius:6px;background:var(--g
 .sec{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px 14px;margin-bottom:10px}.sec h3{margin:4px 0 8px;font-size:17px}
 .sec textarea{font:15px/1.5 Inter,system-ui,sans-serif}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px}@media(max-width:900px){.cols{grid-template-columns:1fr}}
+
+.sechead{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.chip{background:var(--gold);color:var(--ink);font-size:12px;padding:2px 9px;border-radius:10px;font-weight:600;white-space:nowrap}
+.chip.muted{background:#ded3bf;color:#5b5365}
+.askform{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.askform input[type=text],.askform input[name=instruction]{flex:1;min-width:220px;padding:8px;border:1px solid #cbbfa9;border-radius:6px;font:inherit}
+.opt{border:1px dashed var(--gold);border-radius:8px;padding:4px 12px 10px;margin:8px 0;background:#fffdf8}
+.pending{background:#fbf0d2;border:1px solid var(--gold);border-radius:6px;padding:8px 10px;margin:8px 0;font-size:14px}
+.chat{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.msg{border-radius:12px;padding:8px 14px;max-width:88%}
+.msg div{margin:0}.msg b{font-size:12px;opacity:.8;display:block;margin-bottom:2px}
+.msg.owner{align-self:flex-end;background:var(--plum);color:var(--ivory)}
+.msg.owner a{color:var(--gold)}
+.msg.agent{align-self:flex-start;background:#fff;border:1px solid var(--line)}
+.msg.system{align-self:center;background:#e8f1e4;font-size:13px;color:#2f5a27}
+.proposal{border:2px solid var(--gold);border-radius:10px;padding:12px 16px;margin:12px 0;background:#fffdf8}
+details summary{cursor:pointer;margin:12px 0;color:var(--plum);font-weight:600}
 """
+
+
+
+# ---------- agent requests (alternatives + SOP chat) ----------
+REQ_DIR = "requests"
+SECTION_AGENT = {
+    "On-screen hook": ("2-factcheck-draft", "Draft agent"),
+    "Slides": ("2-factcheck-draft", "Draft agent"),
+    "Voiceover": ("2-factcheck-draft", "Draft agent"),
+    "Caption": ("2b-seo", "Search agent"),
+    "SEO": ("2b-seo", "Search agent"),
+    "Visual notes": ("3-video", "Video agent"),
+}
+
+
+def new_id():
+    return now().strftime("%Y%m%d-%H%M%S-") + os.urandom(2).hex()
+
+
+def load_requests(kind="alternatives"):
+    d = REPO / REQ_DIR
+    out = []
+    if d.is_dir():
+        for p in sorted(d.glob("*.json")):
+            try:
+                r = json.loads(p.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            if r.get("kind") == kind:
+                out.append(r)
+    return out
+
+
+def save_request(r, commit=True):
+    d = REPO / REQ_DIR
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f'{r["id"]}.json').write_text(json.dumps(r, indent=2, ensure_ascii=False), encoding="utf-8")
+    if commit:
+        return commit_push(f'request: {r["kind"]} {r.get("section","")}'.strip(), [f'{REQ_DIR}/{r["id"]}.json'])
+    return ""
+
+
+def section_requests(date, section):
+    return [r for r in load_requests("alternatives")
+            if r.get("date") == date and r.get("section") == section and r.get("status") in ("pending", "answered")]
+
+
+def chat_path(stem):
+    return REPO / REQ_DIR / "chat" / f"{stem}.json"
+
+
+def load_chat(stem):
+    p = chat_path(stem)
+    if p.is_file():
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {"agent": f"agents/{stem}.md", "status": "idle", "messages": [], "proposal": None}
+
+
+def save_chat(stem, c, commit=True):
+    p = chat_path(stem)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(c, indent=2, ensure_ascii=False), encoding="utf-8")
+    if commit:
+        return commit_push(f"chat: {stem}", [f"{REQ_DIR}/chat/{stem}.json"])
+    return ""
 
 
 def page(title, body, flash="", authed=True):
@@ -312,7 +397,19 @@ def board(flash=""):
     items = stories()
     today = now().strftime("%Y-%m-%d")
     need = [s for s in items if any(v[0] == "wait" and k in ("Draft", "Review") for k, v in s["stages"].items())]
-    body = [f"<h1>Pipeline</h1><p class='meta'>{len(need)} item(s) waiting for your review. "
+    alt_ready = [r for r in load_requests("alternatives") if r.get("status") == "answered"]
+    chat_ready = [stem for stem in [p.stem for p in agent_files()]
+                  if load_chat(stem).get("status") == "answered"]
+    banner = ""
+    if alt_ready or chat_ready:
+        bits = []
+        if alt_ready:
+            bits.append(f'{len(alt_ready)} set(s) of alternatives ready on their stories')
+        if chat_ready:
+            links = ", ".join(f'<a href="/agents?f={quote(st)}.md">{E(st)}</a>' for st in chat_ready)
+            bits.append(f'agent replies to review: {links}')
+        banner = f'<div class="flash">Waiting for you: {"; ".join(bits)}.</div>'
+    body = [banner, f"<h1>Pipeline</h1><p class='meta'>{len(need)} item(s) waiting for your review. "
             f"Yellow = waiting for you or scheduled, green = done, red = sent back.</p>"]
     shown = [s for s in items if s["date"] >= today or s["stages"]["Publish"][0] != "done"]
     for s in shown[:40]:
@@ -330,10 +427,44 @@ def story_page(date, token, flash=""):
     if not s:
         return None
     r = s["row"]
-    left = [f'<h1>{E(r.get("woman",""))}</h1><p class="meta">{E(date)} · {E(r.get("format",""))} · {E(r.get("pillar",""))}</p>']
-    if s["pack"]:
-        left.append(f'<p><a class="btn" href="/story/{E(date)}/edit">Edit this story</a></p>')
-        left.append(f'<div class="pack">{md(s["text"])}</div>')
+    left = [f'<h1>{E(r.get("woman",""))}</h1>'
+            f'<p class="meta">{E(date)} \u00b7 {E(r.get("format",""))} \u00b7 {E(r.get("pillar",""))} \u00b7 Search (SEO): {E(s["seo"])}</p>']
+    if not s["pack"]:
+        left.append('<div class="card">No pack written yet. The research and draft agents build it on their next run.</div>')
+    else:
+        left.append(f'<p><a class="btn" href="/story/{E(date)}/edit">Edit all sections</a> '
+                    f'<span class="meta">or ask the owning agent to rework one part below.</span></p>')
+        pre, sections = split_pack(s["text"])
+        for h, b in sections:
+            owner = SECTION_AGENT.get(h)
+            chip = (f'<span class="chip">{E(owner[1])}</span>' if owner
+                    else '<span class="chip muted">reference</span>')
+            card = [f'<div class="sec"><div class="sechead"><h3>{E(h)}</h3>{chip}</div>',
+                    f'<div class="pack">{md(b)}</div>']
+            if owner:
+                for rq in section_requests(date, h):
+                    if rq["status"] == "pending":
+                        card.append(f'<div class="pending">Asked the {E(owner[1].lower())}: '
+                                    f'\u201c{E(rq.get("instruction") or "give three alternatives")}\u201d \u2014 waiting for a reply.</div>')
+                    else:
+                        card.append(f'<div class="meta">Alternatives for: \u201c{E(rq.get("instruction") or "alternatives")}\u201d</div>')
+                        for i, opt in enumerate(rq.get("options", [])):
+                            card.append(f'<div class="opt"><div class="pack">{md(opt)}</div>'
+                                        f'<form method="post" action="/use" style="margin:0">'
+                                        f'<input type="hidden" name="csrf" value="{token}">'
+                                        f'<input type="hidden" name="rid" value="{E(rq["id"])}">'
+                                        f'<input type="hidden" name="date" value="{E(date)}">'
+                                        f'<input type="hidden" name="idx" value="{i}">'
+                                        f'<button class="alt">Use this</button></form></div>')
+                card.append(f'<form method="post" action="/ask" class="askform">'
+                            f'<input type="hidden" name="csrf" value="{token}">'
+                            f'<input type="hidden" name="date" value="{E(date)}">'
+                            f'<input type="hidden" name="section" value="{E(h)}">'
+                            f'<input type="text" name="instruction" '
+                            f'placeholder="Tell the {E(owner[1].lower())} what to change, then get 3 options">'
+                            f'<button class="alt">Ask for alternatives</button></form>')
+            card.append('</div>')
+            left.append("".join(card))
         last = s["script"]
         note = f'<p class="meta">Last decision: {E(last["decision"])} at {E(last["at_ist"])}. {E(last["note"])}</p>' if last else ""
         left.append(f'<form class="review" method="post" action="/review"><h3>Review the script</h3>{note}'
@@ -342,8 +473,6 @@ def story_page(date, token, flash=""):
                     f'<textarea name="note" rows="3" placeholder="Note for the draft agent (needed when asking for changes)"></textarea>'
                     f'<button name="decision" value="Approved">Approve script</button>'
                     f'<button class="alt" name="decision" value="Changes requested">Ask for changes</button></form>')
-    else:
-        left.append('<div class="card">No pack written yet.</div>')
     right = ["<h3>Media</h3>"]
     if s["kind"] == "video":
         right.append(f'<video controls playsinline preload="metadata" src="/media/{quote(s["media"][0])}"></video>')
@@ -360,7 +489,7 @@ def story_page(date, token, flash=""):
         last = s["video"]
         note = f'<p class="meta">Last decision: {E(last["decision"])} at {E(last["at_ist"])}. {E(last["note"])}</p>' if last else ""
         right.append(f'<form class="review" method="post" action="/review"><h3>Review the media</h3>'
-                     f'<p class="meta">Queue status: <b>{E(status)}</b> · slot: {E(when)}</p>{note}'
+                     f'<p class="meta">Queue status: <b>{E(status)}</b> \u00b7 slot: {E(when)}</p>{note}'
                      f'<input type="hidden" name="csrf" value="{token}"><input type="hidden" name="date" value="{E(date)}">'
                      f'<input type="hidden" name="stage" value="video">'
                      f'<textarea name="note" rows="3" placeholder="Note for the video agent"></textarea>'
@@ -476,15 +605,44 @@ def agent_files():
 
 def agents_page(token, name="", flash=""):
     files = agent_files()
-    links = " · ".join(f'<a href="/agents?f={quote(p.name)}">{E(p.stem)}</a>' for p in files)
-    body = [f"<h1>Agents</h1><p class='meta'>Each stage follows its own instruction file. Edit one, save, and the "
-            f"agent uses the new text on its next run.</p><p>{links}</p>"]
+    links = " \u00b7 ".join(f'<a href="/agents?f={quote(p.name)}">{E(p.stem)}</a>' for p in files)
+    body = [f"<h1>Agents</h1><p class='meta'>Each stage follows its own instruction file (its SOP). "
+            f"Chat with an agent to improve its SOP \u2014 your feedback becomes a proposed change you approve or reject. "
+            f"Nothing changes an agent without your approval.</p><p>{links}</p>"]
     cur = next((p for p in files if p.name == name), None)
     if cur:
-        body.append(f'<form method="post" action="/agents"><input type="hidden" name="csrf" value="{token}">'
-                    f'<input type="hidden" name="f" value="{E(cur.name)}"><h3>{E(cur.name)}</h3>'
+        stem = cur.stem
+        c = load_chat(stem)
+        body.append(f'<h2>{E(cur.name)}</h2>')
+        body.append('<div class="chat">')
+        if not c.get("messages"):
+            body.append('<p class="meta">No conversation yet. Tell the agent what to do differently \u2014 for example '
+                        '\u201copen hooks with a year and a place\u201d, or \u201ckeep carousels to six slides\u201d. '
+                        'It replies here and proposes an SOP change for you to approve.</p>')
+        for m in c.get("messages", []):
+            who = "You" if m["role"] == "owner" else ("System" if m["role"] == "system" else stem)
+            body.append(f'<div class="msg {E(m["role"])}"><b>{E(who)}</b><div>{md(m["text"])}</div></div>')
+        body.append('</div>')
+        if c.get("status") == "pending":
+            body.append('<div class="pending">Waiting for the agent to reply\u2026 (Hermes answers on its next run.)</div>')
+        if c.get("proposal"):
+            pr = c["proposal"]
+            body.append(f'<div class="proposal"><h3>Proposed SOP change</h3>'
+                        f'<p class="meta">{E(pr.get("rationale",""))}</p>'
+                        f'<textarea class="prompt" readonly>{E(pr.get("new_sop",""))}</textarea>'
+                        f'<form method="post" action="/sop" style="display:inline">'
+                        f'<input type="hidden" name="csrf" value="{token}"><input type="hidden" name="f" value="{E(cur.name)}">'
+                        f'<button name="action" value="approve">Approve and apply</button>'
+                        f'<button class="no" name="action" value="reject">Reject</button></form></div>')
+        body.append(f'<form method="post" action="/chat" class="askform">'
+                    f'<input type="hidden" name="csrf" value="{token}"><input type="hidden" name="stem" value="{E(stem)}">'
+                    f'<textarea name="text" rows="3" placeholder="Message the {E(stem)} agent about how it should work"></textarea>'
+                    f'<button class="alt">Send</button></form>')
+        body.append(f'<details><summary>View / edit the raw SOP directly</summary>'
+                    f'<form method="post" action="/agents"><input type="hidden" name="csrf" value="{token}">'
+                    f'<input type="hidden" name="f" value="{E(cur.name)}">'
                     f'<textarea class="prompt" name="text">{E(cur.read_text(encoding="utf-8"))}</textarea>'
-                    f'<button>Save and push</button></form>')
+                    f'<button>Save and push</button></form></details>')
     return page("Agents", "".join(body), flash)
 
 
@@ -562,6 +720,96 @@ def do_agent_save(form):
 
 
 # ---------- auth ----------
+def do_ask(form):
+    date, section = form.get("date", ""), form.get("section", "")
+    instruction = form.get("instruction", "").strip()[:500]
+    if section not in SECTION_AGENT:
+        return "That part cannot be reworked by an agent."
+    s = next((x for x in stories() if x["date"] == date), None)
+    if not s or not s["pack"]:
+        return "Story not found."
+    pre, sections = split_pack(s["text"])
+    cur = next((b for h, b in sections if h == section), "")
+    stem, label = SECTION_AGENT[section]
+    rid = new_id()
+    rq = {"id": rid, "kind": "alternatives", "date": date, "section": section,
+          "pack": str(s["pack"].relative_to(REPO)), "agent": f"agents/{stem}.md",
+          "instruction": instruction, "current": cur, "status": "pending",
+          "created": now().strftime("%Y-%m-%d %H:%M"), "options": []}
+    return (f"Asked the {label.lower()} to rework {section}; it will reply here within a few minutes. "
+            + save_request(rq))
+
+
+def do_use(form):
+    rid, idx = form.get("rid", ""), form.get("idx", "")
+    rq = next((r for r in load_requests("alternatives") if r.get("id") == rid), None)
+    if not rq or rq.get("status") != "answered":
+        return "Those alternatives are no longer available."
+    try:
+        opt = rq["options"][int(idx)]
+    except Exception:
+        return "Option not found."
+    date, section = rq["date"], rq["section"]
+    s = next((x for x in stories() if x["date"] == date), None)
+    if not s or not s["pack"]:
+        return "Story not found."
+    pre, sections = split_pack(s["text"])
+    found, new = False, []
+    for h, b in sections:
+        if h == section and not found:
+            new.append((h, opt.strip())); found = True
+        else:
+            new.append((h, b))
+    if not found:
+        return "That section no longer exists."
+    s["pack"].write_text(join_pack(pre, new), encoding="utf-8")
+    rq["status"] = "applied"; rq["applied_index"] = int(idx)
+    save_request(rq, commit=False)
+    rel = str(s["pack"].relative_to(REPO))
+    extra = ""
+    if section in ("On-screen hook", "Slides", "Voiceover", "Visual notes") and s["media"]:
+        extra = " The media still shows the old version \u2014 use \u201cEdit all sections\u201d then \u201cregenerate\u201d to rebuild it."
+    return f"Updated {section}. " + commit_push(f"edit: {date} {section} via alternatives", [rel, f"{REQ_DIR}/{rid}.json"]) + extra
+
+
+def do_chat(form):
+    stem = form.get("stem", "")
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", stem) or not (REPO / "agents" / f"{stem}.md").is_file():
+        return "Unknown agent."
+    text = form.get("text", "").strip()[:2000]
+    if not text:
+        return "Type a message first."
+    c = load_chat(stem)
+    c.setdefault("messages", []).append({"role": "owner", "text": text, "at": now().strftime("%Y-%m-%d %H:%M")})
+    c["status"] = "pending"
+    return "Sent. The agent replies here within a few minutes. " + save_chat(stem, c)
+
+
+def do_sop(form):
+    name, action = form.get("f", ""), form.get("action", "")
+    if not re.fullmatch(r"[A-Za-z0-9._-]+\.md", name) or not (REPO / "agents" / name).is_file():
+        return "Unknown agent file."
+    stem = name[:-3]
+    c = load_chat(stem)
+    pr = c.get("proposal")
+    if not pr:
+        return "No proposal to act on."
+    stamp = now().strftime("%Y-%m-%d %H:%M")
+    if action == "approve":
+        new = pr.get("new_sop", "")
+        if not new.strip():
+            return "The proposed SOP is empty; not applying."
+        (REPO / "agents" / name).write_text(new if new.endswith("\n") else new + "\n", encoding="utf-8")
+        c.setdefault("messages", []).append({"role": "system", "text": "SOP updated by owner approval.", "at": stamp})
+        c["proposal"] = None; c["status"] = "idle"
+        save_chat(stem, c, commit=False)
+        return "SOP updated. " + commit_push(f"agents: {name} updated via chat approval",
+                                             [f"agents/{name}", f"{REQ_DIR}/chat/{stem}.json"])
+    c.setdefault("messages", []).append({"role": "system", "text": "Owner rejected the proposed SOP change.", "at": stamp})
+    c["proposal"] = None; c["status"] = "idle"
+    return "Proposal rejected. " + save_chat(stem, c)
+
+
 def sign(value):
     return hmac.new(SECRET, value.encode(), hashlib.sha256).hexdigest()
 
@@ -734,6 +982,18 @@ class Handler(BaseHTTPRequestHandler):
             return self.redirect(f"/story/{d}{'' if ok else '/edit'}?m={quote(msg)}")
         if u.path == "/agents":
             msg = do_agent_save(form)
+            return self.redirect(f"/agents?f={quote(form.get('f',''))}&m={quote(msg)}")
+        if u.path == "/ask":
+            msg = do_ask(form)
+            return self.redirect(f"/story/{quote(form.get('date',''))}?m={quote(msg)}")
+        if u.path == "/use":
+            msg = do_use(form)
+            return self.redirect(f"/story/{quote(form.get('date',''))}?m={quote(msg)}")
+        if u.path == "/chat":
+            msg = do_chat(form)
+            return self.redirect(f"/agents?f={quote(form.get('stem',''))}.md&m={quote(msg)}")
+        if u.path == "/sop":
+            msg = do_sop(form)
             return self.redirect(f"/agents?f={quote(form.get('f',''))}&m={quote(msg)}")
         self.send_error(404)
 
