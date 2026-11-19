@@ -34,6 +34,7 @@ STAGES = ["Research", "Draft", "Video", "Voice", "Review", "Publish"]
 QUEUE_FIELDS = ["date", "time_ist", "format", "media", "pack", "voice", "status"]
 REVIEW_FIELDS = ["date", "stage", "decision", "note", "at_ist"]
 MEDIA_DIRS = ("reels", "carousels")
+V2_DIR = REPO / "v2"
 
 
 # ---------- git ----------
@@ -353,6 +354,7 @@ def page(title, body, flash="", authed=True):
         when = s["at"].strftime("%H:%M") if s["at"] else "-"
         mark = "" if s["ok"] else "⚠ "
         nav = (f'<a href="/">Board</a><a href="/agents">Agents</a><a href="/activity">Activity</a>'
+               f'<a href="/v2/">v2 preview</a>'
                f'<span class="sync">{mark}{E(s["msg"])} · {when} IST</span>')
     fl = f'<div class="flash">{E(flash)}</div>' if flash else ""
     return (f'<!doctype html><html lang="en"><head><meta charset="utf-8">'
@@ -904,6 +906,32 @@ class Handler(BaseHTTPRequestHandler):
             except (BrokenPipeError, ConnectionResetError):
                 pass
 
+    def serve_v2(self, rel):
+        """Serve the static v2 design snapshot, behind the same login as the board."""
+        from urllib.parse import unquote
+        rel = unquote(rel).lstrip("/")
+        if not rel or rel.endswith("/"):
+            rel += "index.html"
+        base = V2_DIR.resolve()
+        p = (base / rel).resolve()
+        try:
+            p.relative_to(base)
+        except ValueError:
+            return self.send_error(404)
+        if p.is_dir():
+            p = p / "index.html"
+        if not p.is_file():
+            return self.send_error(404)
+        data = p.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", mimetypes.guess_type(p.name)[0] or "application/octet-stream")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.end_headers()
+        if self.command != "HEAD":
+            self.wfile.write(data)
+
     def serve_public(self, rest):
         """Signed, login-free link to one approved media file, for Instagram's servers to fetch."""
         from urllib.parse import unquote
@@ -925,12 +953,19 @@ class Handler(BaseHTTPRequestHandler):
         sess = self.session()
         if u.path == "/health":
             return self.send_html("ok")
+        if u.path == "/v2/health":
+            ok = (V2_DIR / "index.html").is_file() and (V2_DIR / "images/processed/lynn-conway-a.jpg").is_file()
+            return self.send_html("ok v2" if ok else "v2 missing", 200 if ok else 503)
         if u.path.startswith("/pub/"):
             return self.serve_public(u.path[5:])
         if not sess:
             return self.login_page() if u.path in ("/", "/login") else self.redirect("/login")
         token = sign("csrf:" + sess)
         flash = qs.get("m", "")
+        if u.path == "/v2":
+            return self.redirect("/v2/")
+        if u.path.startswith("/v2/"):
+            return self.serve_v2(u.path[4:])
         if u.path in ("/", "/login"):
             return self.send_html(board(flash))
         if u.path.startswith("/story/") and u.path.endswith("/edit"):
