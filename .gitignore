@@ -8,3 +8,7 @@ voice/
 .DS_Store
 Photos/
 reels/drafts/
+
+# Impeccable runtime (the design record is DESIGN.md + .impeccable/design.json)
+.impeccable/bin/
+.impeccable/review/

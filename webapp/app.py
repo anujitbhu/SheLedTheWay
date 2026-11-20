@@ -276,6 +276,24 @@ a.btn{display:inline-block;padding:7px 14px;border-radius:6px;background:var(--g
 .msg.system{align-self:center;background:#e8f1e4;font-size:13px;color:#2f5a27}
 .proposal{border:2px solid var(--gold);border-radius:10px;padding:12px 16px;margin:12px 0;background:#fffdf8}
 details summary{cursor:pointer;margin:12px 0;color:var(--plum);font-weight:600}
+.cinema{background:#140b1c;border-radius:16px;padding:6px 20px 24px;margin:14px 0;color:#f3ecf8}
+.cinema h2{font-family:'Playfair Display',Georgia,serif;color:#f3ecf8;font-size:20px;margin:22px 4px 6px}
+.rail{display:flex;gap:16px;overflow-x:auto;padding:12px 4px 18px;scroll-snap-type:x mandatory}
+.rail::-webkit-scrollbar{height:8px}.rail::-webkit-scrollbar-thumb{background:#3a2b47;border-radius:8px}
+.pcard{flex:0 0 184px;scroll-snap-align:start;text-decoration:none;color:inherit;transition:transform .15s}
+.pcard:hover{transform:translateY(-5px)}
+.poster{position:relative;height:272px;border-radius:12px;overflow:hidden;background:linear-gradient(160deg,#3B1C4A,#2a1436);border:1px solid #2c1d38;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.poster .num{position:absolute;left:-4px;bottom:-22px;font-family:'Playfair Display',Georgia,serif;font-size:132px;font-weight:800;color:rgba(255,255,255,.06);line-height:1}
+.poster .pillar{position:absolute;top:11px;left:13px;font-size:10px;letter-spacing:1.5px;color:#C9A24B;text-transform:uppercase}
+.poster .pname{position:absolute;left:14px;right:14px;top:60px;font-family:'Playfair Display',Georgia,serif;font-size:24px;line-height:1.08;font-weight:800}
+.poster .phook{position:absolute;left:14px;right:14px;bottom:48px;font-size:12px;opacity:.82}
+.poster .pbadge{position:absolute;bottom:12px;left:14px;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px}
+.b-pub{background:#2f6b36;color:#eafbe8}.b-sched{background:#8a6d1f;color:#fff6df}.b-draft{background:#5a4a2a;color:#f3e6c9}
+.b-needs{background:#B5544B;color:#fff}.b-over{background:#7a2d27;color:#ffe3df}.b-plan{background:#33243f;color:#cdbfe0}
+.pdate{text-align:center;margin-top:9px;font-size:12.5px;color:#cdbfe0;border:1px solid #2c1d38;border-radius:8px;padding:5px}
+.pfmt{font-size:10.5px;color:#9b8bb0;text-align:center;margin-top:3px}
+.railempty{color:#9b8bb0;padding:10px 4px;font-size:14px}
+
 """
 
 
@@ -395,6 +413,37 @@ def md(text):
     return "\n".join(out)
 
 
+def card_status(s):
+    q = s["queue"]
+    qs = q["status"] if q else ""
+    today = now().strftime("%Y-%m-%d")
+    if s["log"] or qs == "Published":
+        return ("Published", "b-pub")
+    if qs == "Approved":
+        return ("Scheduled", "b-sched")
+    if qs and qs.startswith(("Held", "Failed")):
+        return ("Needs you", "b-needs")
+    if s["media"]:
+        return ("Needs review", "b-needs")
+    if s["pack"]:
+        return ("Overdue", "b-over") if s["date"] < today else ("Draft", "b-draft")
+    return ("Planned", "b-plan")
+
+
+def poster_card(s, n):
+    r = s["row"]
+    label, cls = card_status(s)
+    hook = r.get("hook", "") or ""
+    return (f'<a class="pcard" href="/story/{E(s["date"])}">'
+            f'<div class="poster"><div class="num">{n}</div>'
+            f'<div class="pillar">{E(r.get("pillar","") or "—")}</div>'
+            f'<div class="pname">{E(r.get("woman",""))}</div>'
+            f'<div class="phook">{E(hook[:90])}</div>'
+            f'<div class="pbadge {cls}">{E(label)}</div></div>'
+            f'<div class="pdate">{E(s["date"])}</div>'
+            f'<div class="pfmt">{E(r.get("format",""))}</div></a>')
+
+
 def board(flash=""):
     items = stories()
     today = now().strftime("%Y-%m-%d")
@@ -403,25 +452,25 @@ def board(flash=""):
     chat_ready = [stem for stem in [p.stem for p in agent_files()]
                   if load_chat(stem).get("status") == "answered"]
     banner = ""
-    if alt_ready or chat_ready:
+    if alt_ready or chat_ready or need:
         bits = []
+        if need:
+            bits.append(f'{len(need)} story(ies) to review')
         if alt_ready:
-            bits.append(f'{len(alt_ready)} set(s) of alternatives ready on their stories')
+            bits.append(f'{len(alt_ready)} set(s) of alternatives ready')
         if chat_ready:
             links = ", ".join(f'<a href="/agents?f={quote(st)}.md">{E(st)}</a>' for st in chat_ready)
-            bits.append(f'agent replies to review: {links}')
+            bits.append(f'agent replies: {links}')
         banner = f'<div class="flash">Waiting for you: {"; ".join(bits)}.</div>'
-    body = [banner, f"<h1>Pipeline</h1><p class='meta'>{len(need)} item(s) waiting for your review. "
-            f"Yellow = waiting for you or scheduled, green = done, red = sent back.</p>"]
-    shown = [s for s in items if s["date"] >= today or s["stages"]["Publish"][0] != "done"]
-    for s in shown[:40]:
-        r = s["row"]
-        cells = "".join(f'<div class="stage {v[0]}"><b>{i+1}. {k}</b>{E(v[1])}</div>'
-                        for i, (k, v) in enumerate(s["stages"].items()))
-        body.append(f'<div class="card"><h3><a href="/story/{E(s["date"])}">{E(r.get("woman",""))}</a></h3>'
-                    f'<div class="meta">{E(s["date"])} · {E(r.get("format",""))} · {E(r.get("pillar",""))} · Search (SEO): {E(s["seo"])}</div>'
-                    f'<div>{E(r.get("hook",""))}</div><div class="stages">{cells}</div></div>')
-    return page("Board", "".join(body), flash)
+    recent = [s for s in items if s["date"] <= today][::-1]
+    upcoming = [s for s in items if s["date"] > today]
+    rr = "".join(poster_card(s, i + 1) for i, s in enumerate(recent[:16])) or '<div class="railempty">Nothing yet.</div>'
+    ru = "".join(poster_card(s, i + 1) for i, s in enumerate(upcoming[:16])) or '<div class="railempty">Nothing scheduled yet.</div>'
+    body = (f'{banner}<h1>Studio</h1>'
+            f'<div class="cinema"><h2>Recent &amp; live</h2><div class="rail">{rr}</div>'
+            f'<h2>Coming up</h2><div class="rail">{ru}</div></div>'
+            f'<p class="meta">Click a story to review it scene by scene. Posters are typographic \u2014 faceless, on brand.</p>')
+    return page("Studio", body, flash)
 
 
 def story_page(date, token, flash=""):

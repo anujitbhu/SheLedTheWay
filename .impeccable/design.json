@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T19:40:00+05:30",
+  "title": "Design System: SheLedTheWay — The Daily Desk",
+  "extensions": {
+    "colorMeta": {
+      "plum": {
+        "role": "primary",
+        "displayName": "Proof Plum",
+        "tonalRamp": [
+          "#2A1236",
+          "#3B1C4A",
+          "#53305F",
+          "#6B4A78"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Ivory Paper",
+        "tonalRamp": [
+          "#E8DCC9",
+          "#F0E6D6",
+          "#F7F1E8",
+          "#FFFCF6"
+        ]
+      },
+      "gold": {
+        "role": "accent",
+        "displayName": "Antique Gold",
+        "tonalRamp": [
+          "#A9832F",
+          "#C9A24B",
+          "#E2C78C",
+          "#F3E6C8"
+        ]
+      },
+      "rose": {
+        "role": "error",
+        "displayName": "Terracotta Rose",
+        "tonalRamp": [
+          "#8F3B35",
+          "#B5544B",
+          "#D68B82",
+          "#F1DDD8"
+        ]
+      },
+      "sage": {
+        "role": "success",
+        "displayName": "Passed Sage",
+        "tonalRamp": [
+          "#43563E",
+          "#5E7257",
+          "#8EA185",
+          "#E2E9DA"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Charcoal Ink",
+        "tonalRamp": [
+          "#1E1A22",
+          "#4B4252",
+          "#6F6276",
+          "#8D8092"
+        ]
+      },
+      "gold-ink": {
+        "role": "accent",
+        "displayName": "Gold Ink",
+        "tonalRamp": [
+          "#5E4618",
+          "#7A5C20",
+          "#9C7A35"
+        ]
+      },
+      "rose-ink": {
+        "role": "error",
+        "displayName": "Rose Ink",
+        "tonalRamp": [
+          "#7A2C26",
+          "#9E423A",
+          "#C2685F"
+        ]
+      },
+      "tape": {
+        "role": "accent",
+        "displayName": "Archive Tape",
+        "tonalRamp": [
+          "#E2C78C",
+          "rgba(226,199,140,0.52)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Cover Name",
+        "purpose": "The selected story and page titles only."
+      },
+      "body": {
+        "displayName": "Desk Body",
+        "purpose": "All prose, controls, spoken lines and captions."
+      },
+      "label": {
+        "displayName": "Evidence Mono",
+        "purpose": "Timecodes, counts, status stamps, form labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "object",
+        "value": "0 18px 44px -26px rgba(30,26,34,0.42)",
+        "purpose": "The cover poster and the phone preview: objects on the desk."
+      },
+      {
+        "name": "palette",
+        "value": "0 30px 80px -30px rgba(30,26,34,0.6)",
+        "purpose": "The command palette above the page."
+      },
+      {
+        "name": "dialog",
+        "value": "0 40px 90px -40px rgba(30,26,34,0.65)",
+        "purpose": "The approval or change dialog."
+      },
+      {
+        "name": "drawer",
+        "value": "-24px 0 60px -30px rgba(30,26,34,0.45)",
+        "purpose": "A drawer arriving from the right edge."
+      }
+    ],
+    "motion": [
+      {
+        "name": "stamp-in",
+        "value": "420ms cubic-bezier(0.2,0.9,0.2,1)",
+        "purpose": "The one approval stamp: scale from 1.5, rotate from -11deg, blur 0."
+      },
+      {
+        "name": "drawer-in",
+        "value": "220ms cubic-bezier(0.2,0.8,0.2,1)",
+        "purpose": "The run or rule drawer."
+      },
+      {
+        "name": "state",
+        "value": "150ms ease-out",
+        "purpose": "Hover, focus, selected and tab state."
+      },
+      {
+        "name": "toast-in",
+        "value": "200ms ease-out",
+        "purpose": "Toast arrival from 6px below."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desk",
+        "value": "1440px"
+      },
+      {
+        "name": "compact",
+        "value": "1080px"
+      },
+      {
+        "name": "tablet",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "760px"
+      },
+      {
+        "name": "small",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The gate action or the page's one forward action.",
+      "html": "<button class=\"ds-btn-primary\">Approve final cut <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m4 12.5 5 5L20 6.5\"/></svg></button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:38px; padding:0 16px; border:1px solid #3B1C4A; border-radius:2px; background:#3B1C4A; color:#F7F1E8; font:500 12.5px/1 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor:pointer; transition:background 150ms, border-color 150ms; } .ds-btn-primary:hover { background:#2A1236; border-color:#2A1236; } .ds-btn-primary:focus-visible { outline:2px solid #C9A24B; outline-offset:2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "A second action that must not compete with the gate.",
+      "html": "<button class=\"ds-btn-ghost\">Request changes</button>",
+      "css": ".ds-btn-ghost { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:38px; padding:0 16px; border:1px solid #DED2BF; border-radius:2px; background:transparent; color:#1E1A22; font:500 12.5px/1 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor:pointer; transition:background 150ms, border-color 150ms; } .ds-btn-ghost:hover { background:#FFFCF6; border-color:#8D8092; } .ds-btn-ghost:focus-visible { outline:2px solid #C9A24B; outline-offset:2px; }"
+    },
+    {
+      "name": "Status Stamp",
+      "kind": "custom",
+      "refersTo": "stamp-attention",
+      "description": "An exception or a gate state, always with a word.",
+      "html": "<span class=\"ds-stamp\">Final cut</span>",
+      "css": ".ds-stamp { display:inline-flex; align-items:center; gap:5px; padding:3px 7px; border:1px solid #9E423A; border-radius:2px; background:rgba(181,84,75,0.06); color:#9E423A; font:500 8.5px/1.2 'DM Mono', ui-monospace, Menlo, monospace; letter-spacing:0.1em; text-transform:uppercase; white-space:nowrap; }"
+    },
+    {
+      "name": "Week Day",
+      "kind": "custom",
+      "refersTo": "week-day",
+      "description": "One day in the run of show; selected has a gold top rule, late has a rose tag.",
+      "html": "<button class=\"ds-week-day\"><span class=\"ds-wd-top\"><span>WED</span><span class=\"ds-wd-num\">18</span><span class=\"ds-wd-late\">LATE</span></span><span class=\"ds-wd-name\">Lynn Conway</span><span class=\"ds-wd-meta\">REEL · COURAGE</span><span class=\"ds-wd-state\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#B5544B\" stroke-width=\"1.6\"><path d=\"M12 4 2.8 20h18.4L12 4Z\"/><path d=\"M12 9.2v5\"/><path d=\"M12 17.4v.1\"/></svg>Final cut<span class=\"ds-wd-time\">19:30</span></span></button>",
+      "css": ".ds-week-day { display:flex; flex-direction:column; gap:5px; min-height:104px; width:100%; padding:14px; border:0; border-left:1px solid #DED2BF; border-radius:0; background:#F0E6D6; text-align:left; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; box-shadow:inset 0 2px 0 #C9A24B; cursor:pointer; } .ds-week-day:hover { background:#FFFCF6; } .ds-wd-top { display:flex; align-items:center; gap:8px; font:400 9px/1.2 'DM Mono', ui-monospace, Menlo, monospace; letter-spacing:0.12em; color:#6F6276; } .ds-wd-num { margin-left:auto; font-size:11px; color:#1E1A22; } .ds-wd-late { padding:1px 4px; border:1px solid rgba(181,84,75,0.45); border-radius:1px; color:#B5544B; font-size:7.5px; } .ds-wd-name { font-family:'Playfair Display', Georgia, serif; font-size:16.5px; line-height:1.12; color:#3B1C4A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ds-wd-meta { font:400 9px/1.2 'DM Mono', ui-monospace, Menlo, monospace; letter-spacing:0.06em; color:#6F6276; text-transform:uppercase; } .ds-wd-state { display:flex; align-items:center; gap:6px; margin-top:auto; font-size:10px; color:#4B4252; } .ds-wd-time { margin-left:auto; font:400 9px/1 'DM Mono', ui-monospace, Menlo, monospace; color:#6F6276; }"
+    },
+    {
+      "name": "Scene Row",
+      "kind": "custom",
+      "description": "The proof margin: scene number, timecode, storyboard, on-screen line, spoken line, state and length.",
+      "html": "<div class=\"ds-scene\"><span class=\"ds-scene-margin\"><b>01</b><span>00:00</span></span><span class=\"ds-scene-thumb\"></span><span class=\"ds-scene-main\"><span class=\"ds-scene-on\">YORKTOWN HEIGHTS / 1968</span><span class=\"ds-scene-vo\">Yorktown Heights, 1968. Lynn Conway tells IBM she is transitioning; the company fires her.</span></span><span class=\"ds-scene-state\">✓ Locked</span><span class=\"ds-scene-dur\">5.0s</span></div>",
+      "css": ".ds-scene { display:grid; grid-template-columns:52px 54px minmax(0,1fr) 86px 42px; gap:11px; align-items:center; padding:10px 0; border-bottom:1px solid #EBE1D1; background:#F7F1E8; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-scene-margin { position:relative; align-self:stretch; display:flex; flex-direction:column; justify-content:center; gap:2px; padding-left:14px; } .ds-scene-margin::before { content:''; position:absolute; left:3px; top:0; bottom:0; width:1px; background:#DED2BF; } .ds-scene-margin::after { content:''; position:absolute; left:0; top:50%; width:7px; height:7px; border-radius:50%; background:#F7F1E8; border:1px solid #8D8092; transform:translateY(-50%); } .ds-scene-margin b { font:500 10px/1 'DM Mono', ui-monospace, Menlo, monospace; color:#3B1C4A; } .ds-scene-margin span { font:400 8.5px/1 'DM Mono', ui-monospace, Menlo, monospace; color:#6F6276; } .ds-scene-thumb { width:54px; aspect-ratio:9/16; background:#3B1C4A; } .ds-scene-main { min-width:0; } .ds-scene-on { display:block; font:400 8.5px/1.3 'DM Mono', ui-monospace, Menlo, monospace; letter-spacing:0.08em; color:#C9A24B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ds-scene-vo { display:block; margin-top:3px; font-size:12px; line-height:1.4; color:#4B4252; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; } .ds-scene-state { font:400 9.5px/1 'DM Mono', ui-monospace, Menlo, monospace; color:#6F6276; white-space:nowrap; } .ds-scene-dur { font:400 9.5px/1 'DM Mono', ui-monospace, Menlo, monospace; color:#6F6276; text-align:right; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A scene line or a note; a textarea owns its line breaks.",
+      "html": "<label class=\"ds-field\"><span>Voiceover line</span><textarea class=\"ds-input\" rows=\"2\">At Xerox PARC, she works with Carver Mead to create scalable rules for VLSI chips.</textarea></label>",
+      "css": ".ds-field { display:block; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-field > span { display:block; margin-bottom:5px; font:400 8px/1 'DM Mono', ui-monospace, Menlo, monospace; letter-spacing:0.1em; text-transform:uppercase; color:#6F6276; } .ds-input { width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid #DED2BF; border-radius:2px; background:#FFFCF6; color:#1E1A22; font:400 12px/1.45 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; resize:vertical; min-height:62px; } .ds-input:focus { outline:2px solid #F3E6C8; outline-offset:0; border-color:#C9A24B; }"
+    },
+    {
+      "name": "Dialog Consequence",
+      "kind": "custom",
+      "description": "The one-gate approval: slot, destinations, files, undo, then the action.",
+      "html": "<div class=\"ds-consequence\"><div><span>Publishes</span><b>Today · 20:30 IST</b></div><div><span>Destinations</span><b>Instagram Reels · YouTube Shorts</b></div><div><span>Commits</span><b>2 files · queue slot, review</b></div><div><span>Undo</span><b>Until 20:25 IST</b></div></div>",
+      "css": ".ds-consequence { width:100%; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; border-top:1px solid #DED2BF; } .ds-consequence > div { display:flex; align-items:baseline; justify-content:space-between; gap:14px; padding:8px 0; border-bottom:1px solid #EBE1D1; font-size:11.5px; color:#6F6276; } .ds-consequence b { color:#1E1A22; font-weight:500; text-align:right; }"
+    },
+    {
+      "name": "Archive Collage",
+      "kind": "custom",
+      "description": "A duotone archive print on ivory paper, taped at a slight angle, with a mono caption and a stitched gold thread.",
+      "html": "<div class=\"ds-collage\"><figure class=\"ds-print\"><img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='240'%3E%3Crect width='320' height='240' fill='%233B1C4A'/%3E%3Ccircle cx='160' cy='110' r='52' fill='%23C9A24B' opacity='.55'/%3E%3Ctext x='20' y='220' fill='%23F7F1E8' font-family='Georgia' font-size='18'%3ELynn Conway%3C/text%3E%3C/svg%3E\" alt=\"\"><figcaption>Lynn Conway, 2006</figcaption></figure><svg class=\"ds-thread\" viewBox=\"0 0 100 40\" preserveAspectRatio=\"none\"><path d=\"M-4 10 C 18 2, 36 26, 56 18 S 82 34, 104 24\" fill=\"none\" stroke=\"#C9A24B\" stroke-width=\".8\" stroke-dasharray=\".8 1.4\"/></svg></div>",
+      "css": ".ds-collage { position:relative; width:320px; height:240px; background:#3B1C4A; overflow:hidden; font-family:'DM Mono', ui-monospace, Menlo, monospace; } .ds-print { position:absolute; left:32px; top:24px; width:190px; padding:6px 6px 4px; margin:0; transform:rotate(-2.4deg); background:linear-gradient(180deg,#FFFCF6,#F0E6D6); border:1px solid #DED2BF; box-shadow:0 12px 26px -16px rgba(10,4,16,.9); } .ds-print::before { content:''; position:absolute; top:-8px; left:50%; width:44px; height:12px; transform:translateX(-50%) rotate(-2deg); background:rgba(226,199,140,.52); } .ds-print img { display:block; width:100%; height:142px; object-fit:cover; } .ds-print figcaption { padding-top:5px; font-size:6px; color:#3B1C4A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ds-thread { position:absolute; inset:0; width:100%; height:100%; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Proof Desk",
+    "overview": "A one-person daily paper, not a monitoring wall. A proof sheet is on the desk, the week's run is pinned above it, and only the marks that need a human hand are red. Ivory paper and plum ink, gold as a proofreader's mark, terracotta as a correction. The signature is the proof margin in the scene ledger and the single approval stamp. The archive layer pins real photographs to the proof: duotone prints, tape, captions and one stitched gold thread.",
+    "keyCharacteristics": [
+      "Ivory paper, plum ink, gold signal, terracotta correction, sage passed",
+      "Playfair for the story, Inter for controls, DM Mono for evidence",
+      "One cover, one decision, one gate per Reel",
+      "The week as a run of show; the cut as seven scenes",
+      "Hairlines and quiet instead of card grids",
+      "Flat at rest; depth only for objects, dialogs and drawers",
+      "Credited archive photographs on paper prints, with a stitched thread"
+    ],
+    "rules": [
+      {
+        "name": "The One Gate Rule",
+        "body": "The owner approves the final cut. Script, sources, SEO, render and voice must pass automatically or stop before the gate.",
+        "section": "components"
+      },
+      {
+        "name": "The Proof Margin Rule",
+        "body": "Every scene row carries its number and timecode on a 1px line with a 7px dot. The margin is the signature and the wayfinding.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Gold Is a Signal Rule",
+        "body": "Gold marks attention, selection or a human hand. It never decorates a large surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Raw Prompt Rule",
+        "body": "A rule is the interface; the SOP is the receipt behind a disclosure. The owner never edits a raw prompt to change behaviour.",
+        "section": "components"
+      },
+      {
+        "name": "The Consequence Rule",
+        "body": "Every action states its slot, destinations, files and undo window before the click.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do give the selected story the only 46px Playfair name.",
+      "Do keep the one gate as the single primary action.",
+      "Do use DM Mono for timecodes, counts, durations and meters.",
+      "Do show the proof margin on every scene row.",
+      "Do let the page end in quiet paper.",
+      "Do use credited archive photographs, duotoned, with the credit in Facts."
+    ],
+    "donts": [
+      "Don't turn the Desk into a card grid of equal stories.",
+      "Don't use a Kanban as the home; the calendar is the plan.",
+      "Don't put Playfair on buttons, tabs or table cells.",
+      "Don't use gold as a background wash or gradient.",
+      "Don't show a raw markdown file as the agent's primary interface.",
+      "Don't regenerate the whole video from one note.",
+      "Don't use an uncredited image or an AI-generated likeness."
+    ]
+  }
+}
