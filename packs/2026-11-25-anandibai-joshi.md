@@ -26,10 +26,17 @@ Save or send this story to someone opening a path for others.
 #AnandibaiJoshi #WomenInMedicine #MedicalHistory #SheLedTheWay
 
 ## SEO
-pending
+Primary keyword: Anandibai Joshi medical degree
+Supporting keywords: Woman’s Medical College of Pennsylvania; women’s healthcare in India; Albert Edward Hospital in Kolhapur
+Caption opening (max 125 characters): Anandibai Joshi’s medical degree was her answer to a need: women’s healthcare in India needed women doctors. (108 characters)
+On-screen keyword: Anandibai Joshi | Medical school
+Spoken keyword: Anandibai Joshi — spoken in the first sentence; the medical-school topic is also spoken in that opening line.
+Alt text: Deep-plum 9:16 Reel cover with a gold “Perseverance” tag, large ivory “Anandibai Joshi,” an ivory hook about leaving India for medical school after her infant son dies, a faint antique-gold circuit motif and the @sheledtheway footer; no portrait.
+Hashtags: #AnandibaiJoshi #WomenInMedicine #MedicalHistory #SheLedTheWay
+Search check: Caption, cover hook and opening voiceover align on Anandibai Joshi and her medical-education story.[1][2] Instagram top-result captions/profile fields remain unverified (public-fetch HTTP 429; Chromium startup failed); Google People Also Ask was not exposed by the available search tools, and no search volumes were verified.
 
 ## Visual notes
-Text-led, faceless Reel in deep plum with ivory Playfair headlines, antique-gold emphasis and the renderer’s subtle rays motif. The first scene carries the full-name hook and medical-school topic together. No AI-generated portrait or web photo.
+Text-led, faceless Reel in deep plum with ivory Playfair headlines, antique-gold emphasis and the renderer’s default subtle circuit motif. The first scene carries the full-name hook and medical-school topic together. No AI-generated portrait or web photo.
 
 ## Fact-check notes
 - Verified: Her infant son died after childbirth; she connected the loss to the need for better medical care.[1][2]
